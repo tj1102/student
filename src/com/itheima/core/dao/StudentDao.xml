@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+Mapper代理开发的规范
+1)Mapper接口的名称和对应的Mapper.xml映射文件的名称必须一致
+2)Mapper.xml文件的namespace与Mapper接口的类路径相同（即接口文件和映射文件必须放在同一个包 ）
+3)Mapper接口中的方法名Mapper.xml中定义的每个执行语句的id相同
+4)Mapper接口中方法输入参数类型和Mapper.xml中定义的每个sql的parameterType类型相同。
+5)Mapper接口方法输出参数类型要和Mapper.xml中定义的每个sql的resultType类型相同。
+
+  -->
+<!-- namespace表示命名空間,目前只要唯一即可，后面章节会讲到它的重要作用 -->
+<mapper namespace="com.itheima.core.dao.StudentDao">
+<!--根据姓名查询学生信息 -->
+	<select id="findStudentByName" parameterType="Student"
+		                               resultType="Student">
+		select * from student
+		 <where>
+	       <if test="stu_name != null" >
+	           stu_name like concat('%',#{stu_name},'%')
+	       </if>
+        </where>
+        
+         order by stu_id
+		<!-- 执行分页查询 -->
+		<if test="start !=null and rows != null">
+			limit #{start},#{rows}
+		</if>	  
+	</select>
+	
+	
+	
+	<!-- 查询学生总数 -->
+	<select id="findStudentByNameCount" parameterType="student" 
+                                                 resultType="Integer">
+		select count(stu_id) from student
+		
+		 <where>
+	       <if test="stu_name != null" >
+	           stu_name like concat('%',#{stu_name},'%')
+	       </if>
+        </where>
+	</select>	
+	
+
+
+	<!--根据id查询客户信息 -->
+	<select id="findStudentById" parameterType="Integer" resultType="student">
+		select * from student where stu_id=#{stu_id}
+	</select>
+	
+		<!--根据学号查询学生信息 -->
+	<select id="findStudentByNumber" parameterType="Integer" resultType="student">
+		select * from student where stu_number=#{stu_number}
+	</select>
+	<!--添加学生-->
+ 	<insert id="addStudent" parameterType="student">
+	insert into student(stu_id,stu_name,stu_jobs,stu_phone,stu_course,stu_number) values(#{stu_id},#{stu_name},#{stu_jobs},#{stu_phone},#{stu_course},#{stu_number})
+	</insert> 
+	<!--更新学生  -->
+	<update id="updateStudent" parameterType="student">
+		update student set
+		stu_name=#{stu_name},stu_jobs=#{stu_jobs},stu_phone=#{stu_phone},stu_course=#{stu_course},stu_number=#{stu_number} where stu_id=#{stu_id}
+	</update> 
+	<!--删除学生  -->
+	 <delete id="deleteStudent" parameterType="Integer">
+		delete from student
+		where stu_id=#{stu_id}
+	</delete>
+</mapper>
+     
